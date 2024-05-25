@@ -137,6 +137,25 @@ class ProductRepositoryTest {
     }
 
     @Test
+    void shouldCheckExistenceByName() {
+        // Arrange
+        Product product = new Product(
+                null,
+                "Apple",
+                "Fruit",
+                1.12,
+                "USD");
+        Product savedProduct = productRepository.save(product);
+
+        // Act
+        boolean exists = productRepository
+                .existsByName("Apple");
+
+        // Assert
+        assertThat(exists).isTrue();
+    }
+
+    @Test
     void shouldFindProductByName() {
         // Arrange
         Product product = new Product(
