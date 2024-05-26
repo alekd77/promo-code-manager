@@ -27,17 +27,17 @@ class ProductMapperTest {
                 "USD"
         );
 
-        ProductDto productDto = productMapper.toProductDto(product);
+        ProductResponseDto productResponseDto = productMapper.toProductDto(product);
 
-        assertThat(productDto.getId())
+        assertThat(productResponseDto.getId())
                 .isEqualTo(product.getProductId());
-        assertThat(productDto.getName())
+        assertThat(productResponseDto.getName())
                 .isEqualTo(product.getName());
-        assertThat(productDto.getDescription())
+        assertThat(productResponseDto.getDescription())
                 .isEqualTo(product.getDescription());
-        assertThat(productDto.getPrice())
+        assertThat(productResponseDto.getPrice())
                 .isEqualTo(product.getPrice());
-        assertThat(productDto.getCurrency())
+        assertThat(productResponseDto.getCurrency())
                 .isEqualTo(product.getCurrency());
 
     }
@@ -46,17 +46,17 @@ class ProductMapperTest {
     public void shouldReturnEmptyProductDtoIfProductIsNullable() {
         Product product = null;
 
-        ProductDto productDto = productMapper.toProductDto(product);
+        ProductResponseDto productResponseDto = productMapper.toProductDto(product);
 
-        assertThat(productDto.getId())
+        assertThat(productResponseDto.getId())
                 .isEqualTo(-1L);
-        assertThat(productDto.getName())
+        assertThat(productResponseDto.getName())
                 .isEqualTo("");
-        assertThat(productDto.getDescription())
+        assertThat(productResponseDto.getDescription())
                 .isEqualTo("");
-        assertThat(productDto.getPrice())
+        assertThat(productResponseDto.getPrice())
                 .isEqualTo(0.0);
-        assertThat(productDto.getCurrency())
+        assertThat(productResponseDto.getCurrency())
                 .isEqualTo("");
     }
 
@@ -70,17 +70,17 @@ class ProductMapperTest {
                 null
         );
 
-        ProductDto productDto = productMapper.toProductDto(product);
+        ProductResponseDto productResponseDto = productMapper.toProductDto(product);
 
-        assertThat(productDto.getId())
+        assertThat(productResponseDto.getId())
                 .isEqualTo(-1L);
-        assertThat(productDto.getName())
+        assertThat(productResponseDto.getName())
                 .isEqualTo("");
-        assertThat(productDto.getDescription())
+        assertThat(productResponseDto.getDescription())
                 .isEqualTo("");
-        assertThat(productDto.getPrice())
+        assertThat(productResponseDto.getPrice())
                 .isEqualTo(0.0);
-        assertThat(productDto.getCurrency())
+        assertThat(productResponseDto.getCurrency())
                 .isEqualTo("");
     }
 
@@ -103,39 +103,39 @@ class ProductMapperTest {
                 )
         );
 
-        List<ProductDto> productDtoList = productMapper.toProductsDtoList(productsList);
+        List<ProductResponseDto> productResponseDtoList = productMapper.toProductsDtoList(productsList);
 
-        assertThat(productDtoList).isNotNull();
-        assertThat(productDtoList.size()).isEqualTo(2);
-        assertThat(productDtoList.get(0).getId()).isEqualTo(123L);
-        assertThat(productDtoList.get(0).getName()).isEqualTo("Apple");
-        assertThat(productDtoList.get(0).getDescription()).isEqualTo("Fruit");
-        assertThat(productDtoList.get(0).getPrice()).isEqualTo(1.12);
-        assertThat(productDtoList.get(0).getCurrency()).isEqualTo("USD");
-        assertThat(productDtoList.get(1).getId()).isEqualTo(233L);
-        assertThat(productDtoList.get(1).getName()).isEqualTo("Banana");
-        assertThat(productDtoList.get(1).getDescription()).isEqualTo("Fruit");
-        assertThat(productDtoList.get(1).getPrice()).isEqualTo(0.75);
-        assertThat(productDtoList.get(1).getCurrency()).isEqualTo("USD");
+        assertThat(productResponseDtoList).isNotNull();
+        assertThat(productResponseDtoList.size()).isEqualTo(2);
+        assertThat(productResponseDtoList.get(0).getId()).isEqualTo(123L);
+        assertThat(productResponseDtoList.get(0).getName()).isEqualTo("Apple");
+        assertThat(productResponseDtoList.get(0).getDescription()).isEqualTo("Fruit");
+        assertThat(productResponseDtoList.get(0).getPrice()).isEqualTo(1.12);
+        assertThat(productResponseDtoList.get(0).getCurrency()).isEqualTo("USD");
+        assertThat(productResponseDtoList.get(1).getId()).isEqualTo(233L);
+        assertThat(productResponseDtoList.get(1).getName()).isEqualTo("Banana");
+        assertThat(productResponseDtoList.get(1).getDescription()).isEqualTo("Fruit");
+        assertThat(productResponseDtoList.get(1).getPrice()).isEqualTo(0.75);
+        assertThat(productResponseDtoList.get(1).getCurrency()).isEqualTo("USD");
     }
 
     @Test
     public void shouldReturnEmptyProductsDtoListIfProductListIsNullable() {
         List<Product> productsList = null;
 
-        List<ProductDto> productDtoList = productMapper.toProductsDtoList(productsList);
+        List<ProductResponseDto> productResponseDtoList = productMapper.toProductsDtoList(productsList);
 
-        assertThat(productDtoList).isNotNull();
-        assertThat(productDtoList.size()).isEqualTo(0);
+        assertThat(productResponseDtoList).isNotNull();
+        assertThat(productResponseDtoList.size()).isEqualTo(0);
     }
 
     @Test
     public void shouldReturnEmptyProductsDtoListIfProductsListIsEmpty() {
         List<Product> productsList = new ArrayList<>();
 
-        List<ProductDto> productDtoList = productMapper.toProductsDtoList(productsList);
+        List<ProductResponseDto> productResponseDtoList = productMapper.toProductsDtoList(productsList);
 
-        assertThat(productDtoList).isNotNull();
-        assertThat(productDtoList.size()).isEqualTo(0);
+        assertThat(productResponseDtoList).isNotNull();
+        assertThat(productResponseDtoList.size()).isEqualTo(0);
     }
 }

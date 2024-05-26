@@ -1,20 +1,20 @@
 package com.promocodes.promocodesmanager.product;
 
-public class ProductDto {
+public class ProductResponseDto {
     private Long id;
     private String name;
     private String description;
     private Double price;
     private String currency;
 
-    public ProductDto() {
+    public ProductResponseDto() {
     }
 
-    public ProductDto(Long id,
-                      String name,
-                      String description,
-                      Double price,
-                      String currency) {
+    public ProductResponseDto(Long id,
+                              String name,
+                              String description,
+                              Double price,
+                              String currency) {
         this.id = id;
         this.name = name;
         this.description = description;

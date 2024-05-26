@@ -2,48 +2,45 @@ package com.promocodes.promocodesmanager.product;
 
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toList;
-
 @Service
 public class ProductMapper {
-    ProductDto toProductDto(Product product) {
-        ProductDto productDto = new ProductDto();
+    ProductResponseDto toProductDto(Product product) {
+        ProductResponseDto productResponseDto = new ProductResponseDto();
 
-        productDto.setId(
+        productResponseDto.setId(
                 product != null && product.getProductId() != null
                         ? product.getProductId()
                         : -1L
         );
-        productDto.setName(
+        productResponseDto.setName(
                 product != null && product.getName() != null
                         ? product.getName()
                         : ""
         );
-        productDto.setDescription(
+        productResponseDto.setDescription(
                 product != null && product.getDescription() != null
                         ? product.getDescription()
                         : ""
         );
-        productDto.setPrice(
+        productResponseDto.setPrice(
                 product != null && product.getPrice() != null
                         ? product.getPrice()
                         : 0
         );
-        productDto.setCurrency(
+        productResponseDto.setCurrency(
                 product != null && product.getCurrency() != null
                         ? product.getCurrency()
                         : ""
         );
 
-        return productDto;
+        return productResponseDto;
     }
 
-    public List<ProductDto> toProductsDtoList(List<Product> productsList) {
+    public List<ProductResponseDto> toProductsDtoList(List<Product> productsList) {
         return productsList == null || productsList.isEmpty()
                 ? Collections.emptyList()
                 : productsList

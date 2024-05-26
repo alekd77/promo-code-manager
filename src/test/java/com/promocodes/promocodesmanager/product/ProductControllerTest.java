@@ -1,7 +1,6 @@
 package com.promocodes.promocodesmanager.product;
 
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -50,16 +49,16 @@ class ProductControllerTest {
                 )
         );
 
-        List<ProductDto> productsDtoList = new ArrayList<>(
+        List<ProductResponseDto> productsDtoList = new ArrayList<>(
                 Arrays.asList(
-                        new ProductDto(
+                        new ProductResponseDto(
                                 123L,
                                 "Apple",
                                 "Fruit",
                                 1.12,
                                 "USD"
                         ),
-                        new ProductDto(
+                        new ProductResponseDto(
                                 233L,
                                 "Banana",
                                 "Fruit",
@@ -113,7 +112,7 @@ class ProductControllerTest {
     @Test
     public void shouldReturnEmptyProductsDtoListIfProductsListIsNullable() throws Exception {
         List<Product> products = null;
-        List<ProductDto> productsDtoList = new ArrayList<>();
+        List<ProductResponseDto> productsDtoList = new ArrayList<>();
 
         when(productService.getAllProducts())
                 .thenReturn(products);
@@ -139,7 +138,7 @@ class ProductControllerTest {
     @Test
     public void shouldReturnEmptyProductsDtoListIfProductsListIsEmpty() throws Exception {
         List<Product> products = new ArrayList<>();
-        List<ProductDto> productsDtoList = new ArrayList<>();
+        List<ProductResponseDto> productsDtoList = new ArrayList<>();
 
         when(productService.getAllProducts())
                 .thenReturn(products);
