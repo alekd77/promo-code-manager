@@ -2,6 +2,13 @@ package com.promocodes.promocodesmanager.product;
 
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
+
 @Service
 public class ProductMapper {
     ProductDto toProductDto(Product product) {
@@ -34,5 +41,14 @@ public class ProductMapper {
         );
 
         return productDto;
+    }
+
+    public List<ProductDto> toProductsDtoList(List<Product> productsList) {
+        return productsList == null || productsList.isEmpty()
+                ? Collections.emptyList()
+                : productsList
+                .stream()
+                .map(this::toProductDto)
+                .collect(Collectors.toList());
     }
 }
