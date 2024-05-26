@@ -1,13 +1,16 @@
 package com.promocodes.promocodesmanager.product;
 
+import com.promocodes.promocodesmanager.exception.ExceptionMapper;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -16,17 +19,27 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
-@WebMvcTest(controllers = ProductController.class)
-@ExtendWith(MockitoExtension.class)
+@AutoConfigureJsonTesters
+@WebMvcTest(ProductController.class)
 class ProductControllerTest {
-    @MockBean
-    private ProductService productService;
-    @MockBean
-    private ProductMapper productMapper;
     @Autowired
     private MockMvc mockMvc;
+
+    @MockBean
+    private ProductService productService;
+
+    @MockBean
+    private ProductMapper productMapper;
+
+    @MockBean
+    private ExceptionMapper exceptionMapper;
+
+    @Autowired
+    private JacksonTester<ProductDto> jacksonTester;
 
     @Test
     public void shouldReturnProductsDtoList() throws Exception {
@@ -159,5 +172,37 @@ class ProductControllerTest {
                 .getAllProducts();
         verify(productMapper, times(1))
                 .toProductsDtoList(products);
+    }
+
+    @Test
+    public void shouldAddNewProduct() throws Exception {
+        ProductDto productDto = new ProductDto(
+                "Apple",
+                "Fruit",
+                1.12,
+                "USD"
+        );
+        String jsonDto = jacksonTester.write(productDto).getJson();
+
+        // when
+        MockHttpServletResponse response = mockMvc.perform(
+                post("/products")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonDto))
+                .andReturn()
+                .getResponse();
+
+        // then
+        assertThat(response.getStatus())
+                .isEqualTo(HttpStatus.CREATED.value());
+        assertThat(response.getContentAsString())
+                .isEqualTo("Product has been successfully added");
+
+        verify(productService, times(1))
+                .addNewProduct(
+                        productDto.getName(),
+                        productDto.getDescription(),
+                        productDto.getPrice(),
+                        productDto.getCurrency());
     }
 }
