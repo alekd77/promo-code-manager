@@ -11,7 +11,7 @@ public class PromoCodeMapper {
     public FixedAmountPromoCodeResponseDto toFixedAmountPromoCodeResponseDto(PromoCode promoCode) {
         FixedAmountPromoCodeResponseDto dto = new FixedAmountPromoCodeResponseDto();
 
-        dto.setPromoCodeId(
+        dto.setId(
                 promoCode != null && promoCode.getPromoCodeId() != null
                         ? promoCode.getPromoCodeId()
                         : -1L
@@ -65,7 +65,7 @@ public class PromoCodeMapper {
     public PercentagePromoCodeResponseDto toPercentagePromoCodeResponseDto(PromoCode promoCode) {
         PercentagePromoCodeResponseDto dto = new PercentagePromoCodeResponseDto();
 
-        dto.setPromoCodeId(
+        dto.setId(
                 promoCode != null && promoCode.getPromoCodeId() != null
                         ? promoCode.getPromoCodeId()
                         : -1L

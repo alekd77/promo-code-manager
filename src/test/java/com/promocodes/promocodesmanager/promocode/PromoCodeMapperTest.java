@@ -62,7 +62,7 @@ class PromoCodeMapperTest {
                 promoCodeMapper.toFixedAmountPromoCodeResponseDto(promoCode);
 
         assertThat(-1L)
-               .isEqualTo(dto.getPromoCodeId());
+               .isEqualTo(dto.getId());
         assertThat("")
                .isEqualTo(dto.getText());
         assertThat(dto.getExpirationDate()).isNull();
@@ -148,7 +148,7 @@ class PromoCodeMapperTest {
         FixedAmountPromoCodeResponseDto fixedAmountPromoCodeDto =
                 (FixedAmountPromoCodeResponseDto) dtos.get(0);
         assertThat(123L)
-                .isEqualTo(fixedAmountPromoCodeDto.getPromoCodeId());
+                .isEqualTo(fixedAmountPromoCodeDto.getId());
         assertThat("SUMMER2024")
                 .isEqualTo(fixedAmountPromoCodeDto.getText());
         assertThat(LocalDate.of(2024, 8, 1))
@@ -166,7 +166,7 @@ class PromoCodeMapperTest {
         PercentagePromoCodeResponseDto percentagePromoCodeDto =
                 (PercentagePromoCodeResponseDto) dtos.get(1);
         assertThat(244L)
-                .isEqualTo(percentagePromoCodeDto.getPromoCodeId());
+                .isEqualTo(percentagePromoCodeDto.getId());
         assertThat("LOL23")
                 .isEqualTo(percentagePromoCodeDto.getText());
         assertThat(LocalDate.of(2024, 8, 1))

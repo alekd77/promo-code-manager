@@ -3,7 +3,7 @@ package com.promocodes.promocodesmanager.promocode;
 import java.time.LocalDate;
 
 public abstract class PromoCodeResponseDto {
-    private Long promoCodeId;
+    private Long id;
     private String text;
     private LocalDate expirationDate;
     private Integer usagesTotal;
@@ -13,13 +13,13 @@ public abstract class PromoCodeResponseDto {
     public PromoCodeResponseDto() {
     }
 
-    public PromoCodeResponseDto(Long promoCodeId,
+    public PromoCodeResponseDto(Long id,
                                 String text,
                                 LocalDate expirationDate,
                                 Integer usagesTotal,
                                 Integer usagesLeft,
                                 PromoCodeType type) {
-        this.promoCodeId = promoCodeId;
+        this.id = id;
         this.text = text;
         this.expirationDate = expirationDate;
         this.usagesTotal = usagesTotal;
@@ -27,12 +27,12 @@ public abstract class PromoCodeResponseDto {
         this.type = type;
     }
 
-    public Long getPromoCodeId() {
-        return promoCodeId;
+    public Long getId() {
+        return id;
     }
 
-    public void setPromoCodeId(Long promoCodeId) {
-        this.promoCodeId = promoCodeId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getText() {
