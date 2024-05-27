@@ -1,8 +1,9 @@
 package com.promocodes.promocodesmanager.product;
 
-import com.promocodes.promocodesmanager.exception.FailedToAddNewProductException;
-import com.promocodes.promocodesmanager.exception.FailedToUpdateProductException;
+import com.promocodes.promocodesmanager.exception.*;
+import com.promocodes.promocodesmanager.promocode.PromoCode;
 import com.promocodes.promocodesmanager.promocode.PromoCodeService;
+import com.promocodes.promocodesmanager.promocode.PromoCodeType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -339,28 +341,28 @@ class ProductServiceTest {
     }
 
     @Test
-    public void shouldThrowFailedToUpdateProductExceptionIfProductNameIsNullable() {
+    public void shouldThrowProductNotFoundExceptionIfProductNameIsNullable() {
         assertThatThrownBy(() -> productService.updateProduct(
                 null,
                 "Gold Apple",
                 "",
                 1.22,
                 "USD"
-        )).isInstanceOf(FailedToUpdateProductException.class)
+        )).isInstanceOf(ProductNotFoundException.class)
                 .extracting(
                         "message",
                         "status",
                         "debugMessage"
                 )
                 .containsExactly(
-                        "Failed to update product.",
-                        HttpStatus.BAD_REQUEST,
-                        "Product 'null' does not exist."
+                        "Product not found.",
+                        HttpStatus.NOT_FOUND,
+                        "Product name is null or empty."
                 );
     }
 
     @Test
-    public void shouldThrowFailedToUpdateProductExceptionIfProductDoesNotExist() {
+    public void shouldThrowProductNotFoundExceptionIfProductDoesNotExist() {
         when(productRepository.findByName("Apple"))
                 .thenReturn(Optional.empty());
 
@@ -370,16 +372,16 @@ class ProductServiceTest {
                 "",
                 1.22,
                 "USD"
-        )).isInstanceOf(FailedToUpdateProductException.class)
+        )).isInstanceOf(ProductNotFoundException.class)
                 .extracting(
                         "message",
                         "status",
                         "debugMessage"
                 )
                 .containsExactly(
-                        "Failed to update product.",
-                        HttpStatus.BAD_REQUEST,
-                        "Product 'Apple' does not exist."
+                        "Product not found.",
+                        HttpStatus.NOT_FOUND,
+                        ""
                 );
     }
 
@@ -471,6 +473,402 @@ class ProductServiceTest {
                         "Failed to update product.",
                         HttpStatus.BAD_REQUEST,
                         "Currency 'xxxx' is not valid."
+                );
+    }
+
+    @Test
+    public void shouldReturnDiscountProductPriceGreaterThanZeroIfFixedAmountDiscountLessThanProductPrice() {
+        Product product = new Product(
+                123L,
+                "Nike Shoes",
+                "Clothes",
+                150.00,
+                "USD"
+        );
+
+        PromoCode promoCode = new PromoCode(
+                244L,
+                "SUMMER2024",
+                LocalDate.now().plusDays(30),
+                5,
+                3,
+                PromoCodeType.FIXED_AMOUNT,
+                50.00,
+                "USD",
+                null
+        );
+        when(productRepository.findByName("Nike Shoes"))
+                .thenReturn(Optional.of(product));
+
+        when(promoCodeService.getPromoCodeByText("SUMMER2024"))
+                .thenReturn(promoCode);
+
+        Double result = productService.calculateDiscountProductPrice(
+                "Nike Shoes",
+                "SUMMER2024"
+        );
+
+        assertThat(100.0).isEqualTo(result);
+    }
+
+    @Test
+    public void shouldReturnDiscountProductPriceEqualZeroIfFixedAmountDiscountGreaterThanProductPrice() {
+        Product product = new Product(
+                123L,
+                "Nike Shoes",
+                "Clothes",
+                150.00,
+                "USD"
+        );
+
+        PromoCode promoCode = new PromoCode(
+                244L,
+                "SUMMER2024",
+                LocalDate.now().plusDays(30),
+                5,
+                3,
+                PromoCodeType.FIXED_AMOUNT,
+                500.00,
+                "USD",
+                null
+        );
+        when(productRepository.findByName("Nike Shoes"))
+                .thenReturn(Optional.of(product));
+
+        when(promoCodeService.getPromoCodeByText("SUMMER2024"))
+                .thenReturn(promoCode);
+
+        Double result = productService.calculateDiscountProductPrice(
+                "Nike Shoes",
+                "SUMMER2024"
+        );
+
+        assertThat(0.0).isEqualTo(result);
+    }
+
+    @Test
+    public void shouldReturnDiscountProductPriceEqualZeroIfFixedAmountDiscountEqualProductPrice() {
+        Product product = new Product(
+                123L,
+                "Nike Shoes",
+                "Clothes",
+                150.00,
+                "USD"
+        );
+
+        PromoCode promoCode = new PromoCode(
+                244L,
+                "SUMMER2024",
+                LocalDate.now().plusDays(30),
+                5,
+                3,
+                PromoCodeType.FIXED_AMOUNT,
+                150.00,
+                "USD",
+                null
+        );
+        when(productRepository.findByName("Nike Shoes"))
+                .thenReturn(Optional.of(product));
+
+        when(promoCodeService.getPromoCodeByText("SUMMER2024"))
+                .thenReturn(promoCode);
+
+        Double result = productService.calculateDiscountProductPrice(
+                "Nike Shoes",
+                "SUMMER2024"
+        );
+
+        assertThat(0.0).isEqualTo(result);
+    }
+
+    @Test
+    public void shouldReturnDiscountProductPriceGreaterThanZeroIfPercentageDiscountLessThanProductPrice() {
+        Product product = new Product(
+                123L,
+                "Nike Shoes",
+                "Clothes",
+                150.00,
+                "USD"
+        );
+
+        PromoCode promoCode = new PromoCode(
+                244L,
+                "LOL",
+                LocalDate.now().plusDays(30),
+                5,
+                3,
+                PromoCodeType.PERCENTAGE,
+                null,
+                null,
+                90
+        );
+        when(productRepository.findByName("Nike Shoes"))
+                .thenReturn(Optional.of(product));
+
+        when(promoCodeService.getPromoCodeByText("SUMMER2024"))
+                .thenReturn(promoCode);
+
+        Double result = productService.calculateDiscountProductPrice(
+                "Nike Shoes",
+                "SUMMER2024"
+        );
+
+        assertThat(15.0).isEqualTo(result);
+    }
+
+    @Test
+    public void shouldReturnDiscountProductPriceEqualsZeroIfPercentageDiscountEqualsMax() {
+        Product product = new Product(
+                123L,
+                "Nike Shoes",
+                "Clothes",
+                150.00,
+                "USD"
+        );
+
+        PromoCode promoCode = new PromoCode(
+                244L,
+                "LOL",
+                LocalDate.now().plusDays(30),
+                5,
+                3,
+                PromoCodeType.PERCENTAGE,
+                null,
+                null,
+                100
+        );
+        when(productRepository.findByName("Nike Shoes"))
+                .thenReturn(Optional.of(product));
+
+        when(promoCodeService.getPromoCodeByText("SUMMER2024"))
+                .thenReturn(promoCode);
+
+        Double result = productService.calculateDiscountProductPrice(
+                "Nike Shoes",
+                "SUMMER2024"
+        );
+
+        assertThat(0.0).isEqualTo(result);
+    }
+
+    @Test
+    public void shouldReturnDiscountProductPriceIfPromoCodeExpDateIsToday() {
+        Product product = new Product(
+                123L,
+                "Nike Shoes",
+                "Clothes",
+                150.00,
+                "USD"
+        );
+
+        PromoCode promoCode = new PromoCode(
+                244L,
+                "SUMMER2024",
+                LocalDate.now(),
+                5,
+                3,
+                PromoCodeType.FIXED_AMOUNT,
+                50.00,
+                "USD",
+                null
+        );
+        when(productRepository.findByName("Nike Shoes"))
+                .thenReturn(Optional.of(product));
+
+        when(promoCodeService.getPromoCodeByText("SUMMER2024"))
+                .thenReturn(promoCode);
+
+        Double result = productService.calculateDiscountProductPrice(
+                "Nike Shoes",
+                "SUMMER2024"
+        );
+
+        assertThat(100.0).isEqualTo(result);
+    }
+
+    @Test
+    public void shouldThrowProductDiscountCalculationExceptionIfPromoCodeIsExpired() {
+        Product product = new Product(
+                123L,
+                "Nike Shoes",
+                "Clothes",
+                150.00,
+                "USD"
+        );
+
+        PromoCode promoCode = new PromoCode(
+                244L,
+                "SUMMER2024",
+                LocalDate.now().minusDays(1),
+                5,
+                3,
+                PromoCodeType.FIXED_AMOUNT,
+                50.00,
+                "USD",
+                null
+        );
+        when(productRepository.findByName("Nike Shoes"))
+                .thenReturn(Optional.of(product));
+
+        when(promoCodeService.getPromoCodeByText("SUMMER2024"))
+                .thenReturn(promoCode);
+
+        assertThatThrownBy(() -> productService.calculateDiscountProductPrice(
+                "Nike Shoes",
+                "SUMMER2024"
+        )).isInstanceOf(ProductDiscountCalculationException.class)
+                .extracting(
+                        "message",
+                        "status",
+                        "debugMessage"
+                )
+                .containsExactly(
+                        "Product discount calculation failed.",
+                        HttpStatus.BAD_REQUEST,
+                        "Promo code is expired."
+                );
+    }
+
+    @Test
+    public void shouldThrowProductDiscountCalculationExceptionIfPromoCodeIsUsedUp() {
+        Product product = new Product(
+                123L,
+                "Nike Shoes",
+                "Clothes",
+                150.00,
+                "USD"
+        );
+
+        PromoCode promoCode = new PromoCode(
+                244L,
+                "SUMMER2024",
+                LocalDate.now().plusDays(30),
+                5,
+                0,
+                PromoCodeType.FIXED_AMOUNT,
+                50.00,
+                "USD",
+                null
+        );
+        when(productRepository.findByName("Nike Shoes"))
+                .thenReturn(Optional.of(product));
+
+        when(promoCodeService.getPromoCodeByText("SUMMER2024"))
+                .thenReturn(promoCode);
+
+        assertThatThrownBy(() -> productService.calculateDiscountProductPrice(
+                "Nike Shoes",
+                "SUMMER2024"
+        )).isInstanceOf(ProductDiscountCalculationException.class)
+                .extracting(
+                        "message",
+                        "status",
+                        "debugMessage"
+                )
+                .containsExactly(
+                        "Product discount calculation failed.",
+                        HttpStatus.BAD_REQUEST,
+                        "Promo code is used up."
+                );
+    }
+
+    @Test
+    public void shouldThrowProductDiscountCalculationExceptionIfCurrenciesDoNotMatch() {
+        Product product = new Product(
+                123L,
+                "Nike Shoes",
+                "Clothes",
+                150.00,
+                "USD"
+        );
+
+        PromoCode promoCode = new PromoCode(
+                244L,
+                "SUMMER2024",
+                LocalDate.now().plusDays(30),
+                5,
+                5,
+                PromoCodeType.FIXED_AMOUNT,
+                50.00,
+                "EUR",
+                null
+        );
+        when(productRepository.findByName("Nike Shoes"))
+                .thenReturn(Optional.of(product));
+
+        when(promoCodeService.getPromoCodeByText("SUMMER2024"))
+                .thenReturn(promoCode);
+
+        assertThatThrownBy(() -> productService.calculateDiscountProductPrice(
+                "Nike Shoes",
+                "SUMMER2024"
+        )).isInstanceOf(ProductDiscountCalculationException.class)
+                .extracting(
+                        "message",
+                        "status",
+                        "debugMessage"
+                )
+                .containsExactly(
+                        "Product discount calculation failed.",
+                        HttpStatus.BAD_REQUEST,
+                        String.format(
+                                "Currencies of product '%s' " +
+                                        "and promo code '%s' do not match.",
+                                product.getName(),
+                                promoCode.getText()
+                        )
+                );
+    }
+
+    @Test
+    public void shouldThrowProductNotFoundException() {
+        when(productRepository.findByName("Nike Shoes"))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> productService.calculateDiscountProductPrice(
+                "Nike Shoes",
+                "SUMMER2024")
+        ).isInstanceOf(ProductNotFoundException.class)
+                .extracting(
+                        "message",
+                        "status",
+                        "debugMessage"
+                )
+                .containsExactly(
+                        "Product not found.",
+                        HttpStatus.NOT_FOUND,
+                        ""
+                );
+    }
+
+    @Test
+    public void shouldThrowPromoCodeNotFoundException() {
+        Product product = new Product(
+                123L,
+                "Nike Shoes",
+                "Clothes",
+                150.00,
+                "USD"
+        );
+
+        when(productRepository.findByName("Nike Shoes"))
+                .thenReturn(Optional.of(product));
+        when(promoCodeService.getPromoCodeByText("SUMMER2024"))
+                .thenThrow(new PromoCodeNotFoundException());
+
+        assertThatThrownBy(() -> productService.calculateDiscountProductPrice(
+                "Nike Shoes",
+                "SUMMER2024")
+        ).isInstanceOf(PromoCodeNotFoundException.class)
+                .extracting(
+                        "message",
+                        "status",
+                        "debugMessage"
+                )
+                .containsExactly(
+                        "Promo code not found.",
+                        HttpStatus.NOT_FOUND,
+                        ""
                 );
     }
 }

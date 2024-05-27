@@ -2,9 +2,11 @@ package com.promocodes.promocodesmanager.product;
 
 import com.promocodes.promocodesmanager.exception.FailedToAddNewProductException;
 import com.promocodes.promocodesmanager.exception.FailedToUpdateProductException;
+import com.promocodes.promocodesmanager.exception.ProductDiscountCalculationException;
 import com.promocodes.promocodesmanager.exception.ProductNotFoundException;
 import com.promocodes.promocodesmanager.promocode.PromoCode;
 import com.promocodes.promocodesmanager.promocode.PromoCodeService;
+import com.promocodes.promocodesmanager.promocode.PromoCodeType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,7 @@ import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.Currency;
 import java.util.List;
 import java.util.Objects;
@@ -113,13 +116,6 @@ public class ProductService {
 
         Product product = findProductByName(name);
 
-        if (product == null) {
-            throw new FailedToUpdateProductException(
-                    HttpStatus.BAD_REQUEST,
-                    String.format("Product '%s' does not exist.", name)
-            );
-        }
-
         if (newName != null && !newName.isEmpty()) {
             String formattedNewName = StringUtils.capitalize(newName);
 
@@ -176,6 +172,128 @@ public class ProductService {
                     "Unknown error occurred"
             );
         }
+    }
+
+    public Double calculateDiscountProductPrice(String productName,
+                                                String promoCodeText) {
+        Product product = findProductByName(productName);
+        PromoCode promoCode = promoCodeService
+                .getPromoCodeByText(promoCodeText);
+
+        if (product.getPrice() == null || product.getPrice() < 0.0) {
+            throw new ProductDiscountCalculationException(
+                    HttpStatus.BAD_REQUEST,
+                    "Product data are invalid.",
+                    product,
+                    promoCode
+            );
+        }
+
+        if (promoCode.getExpirationDate() == null
+                || promoCode.getUsagesLeft() == null
+                || promoCode.getType() == null) {
+            throw new ProductDiscountCalculationException(
+                    HttpStatus.BAD_REQUEST,
+                    "Promo code data are invalid.",
+                    product,
+                    promoCode
+            );
+        }
+
+        if (promoCode.getExpirationDate().isBefore(LocalDate.now())) {
+            throw new ProductDiscountCalculationException(
+                    HttpStatus.BAD_REQUEST,
+                    "Promo code is expired.",
+                    product,
+                    promoCode
+            );
+        }
+
+        if (promoCode.getUsagesLeft() < 1) {
+            throw new ProductDiscountCalculationException(
+                    HttpStatus.BAD_REQUEST,
+                    "Promo code is used up.",
+                    product,
+                    promoCode
+            );
+        }
+
+        if (promoCode.getType() == PromoCodeType.FIXED_AMOUNT) {
+            return calculateFixedAmountDiscountPrice(
+                    product,
+                    promoCode
+            );
+        }
+
+        if (promoCode.getType() == PromoCodeType.PERCENTAGE) {
+            return calculatePercentageDiscountPrice(
+                    product,
+                    promoCode
+            );
+        }
+
+        throw new ProductDiscountCalculationException(
+                HttpStatus.BAD_REQUEST,
+                "Unsupported promo code type.",
+                product,
+                promoCode
+        );
+    }
+
+    private Double calculateFixedAmountDiscountPrice(Product product,
+                                                     PromoCode promoCode) {
+
+        if (promoCode.getDiscountAmount() == null
+                || promoCode.getDiscountAmount() < 0.0
+                || promoCode.getDiscountCurrency() == null) {
+            throw new ProductDiscountCalculationException(
+                    HttpStatus.BAD_REQUEST,
+                    "Promo code is invalid.",
+                    product,
+                    promoCode
+            );
+        }
+
+        if (!promoCode.getDiscountCurrency().equals(product.getCurrency())) {
+            throw new ProductDiscountCalculationException(
+                    HttpStatus.BAD_REQUEST,
+                    String.format(
+                            "Currencies of product '%s' and promo code '%s' do not match.",
+                            product.getName(),
+                            promoCode.getText()
+                    ),
+                    product,
+                    promoCode
+            );
+        }
+
+        double discountPrice = product.getPrice() -
+                promoCode.getDiscountAmount();
+
+        return discountPrice > 0
+                ? discountPrice
+                : 0;
+    }
+
+    private Double calculatePercentageDiscountPrice(Product product,
+                                                    PromoCode promoCode) {
+
+        if (promoCode.getDiscountPercentage() == null
+                || promoCode.getDiscountPercentage() <= 0
+                || promoCode.getDiscountPercentage() > 100) {
+            throw new ProductDiscountCalculationException(
+                    HttpStatus.BAD_REQUEST,
+                    "Promo code is invalid.",
+                    product,
+                    promoCode
+            );
+        }
+
+        Double discountFactor = Double.valueOf(
+                promoCode.getDiscountPercentage()) / 100.0;
+        Double discountAmount = product.getPrice() * discountFactor;
+
+        return product.getPrice() - discountAmount;
     }
 
     private boolean isValidCurrency(String currency) {
