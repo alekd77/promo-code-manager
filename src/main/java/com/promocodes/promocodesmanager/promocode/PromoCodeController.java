@@ -52,4 +52,16 @@ public class PromoCodeController {
 
         return new ResponseEntity<>("Promo code has been successfully added.", HttpStatus.CREATED);
     }
+
+    @PostMapping(path = "/percentage")
+    public ResponseEntity<String> addNewPercentagePromoCode(@RequestBody PercentagePromoCodeDto dto) {
+        promoCodeService.addNewPercentagePromoCode(
+                dto.getText(),
+                dto.getExpirationDate(),
+                dto.getUsagesAllowed(),
+                dto.getDiscountPercentage()
+        );
+
+        return new ResponseEntity<>("Promo code has been successfully added.", HttpStatus.CREATED);
+    }
 }
