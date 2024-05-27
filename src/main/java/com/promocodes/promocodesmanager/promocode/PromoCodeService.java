@@ -1,6 +1,7 @@
 package com.promocodes.promocodesmanager.promocode;
 
 import com.promocodes.promocodesmanager.exception.FailedToAddNewPromoCodeException;
+import com.promocodes.promocodesmanager.exception.PromoCodeNotFoundException;
 import com.promocodes.promocodesmanager.product.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,11 @@ public class PromoCodeService {
 
     public List<PromoCode> getAllPromoCodes() {
         return promoCodeRepository.findAll();
+    }
+
+    public PromoCode getPromoCodeByText(String text) {
+        return promoCodeRepository.findByText(text)
+               .orElseThrow(PromoCodeNotFoundException::new);
     }
 
     @Transactional

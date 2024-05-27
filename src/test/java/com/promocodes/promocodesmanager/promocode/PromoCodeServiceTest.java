@@ -1,6 +1,7 @@
 package com.promocodes.promocodesmanager.promocode;
 
 import com.promocodes.promocodesmanager.exception.FailedToAddNewPromoCodeException;
+import com.promocodes.promocodesmanager.exception.PromoCodeNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -34,6 +36,51 @@ class PromoCodeServiceTest {
 
         verify(promoCodeRepository, times(1))
                 .findAll();
+    }
+
+    @Test
+    public void shouldReturnPromoCodeByText() {
+        String text = "TEST123";
+
+        PromoCode promoCode = new PromoCode(
+                123L,
+                "TEST123",
+                LocalDate.of(2024, 8, 18),
+                10,
+                10,
+                PromoCodeType.FIXED_AMOUNT,
+                55.55,
+                "USD",
+                null
+        );
+
+        when(promoCodeRepository.findByText(text))
+                .thenReturn(Optional.of(promoCode));
+
+        promoCodeService.getPromoCodeByText(text);
+
+        verify(promoCodeRepository, times(1))
+               .findByText(text);
+    }
+
+    @Test
+    public void shouldThrowPromoCodeNotFoundIfPromoCodeDoesNotExistByText() {
+        String text = "TEST123";
+
+        when(promoCodeRepository.findByText(text))
+               .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> promoCodeService.getPromoCodeByText(text))
+                .isInstanceOf(PromoCodeNotFoundException.class)
+                .extracting(
+                        "message",
+                        "status",
+                        "debugMessage"
+                ).containsExactly(
+                        "Promo code not found.",
+                        HttpStatus.NOT_FOUND,
+                        ""
+                );
     }
 
     @Test
