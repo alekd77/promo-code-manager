@@ -40,7 +40,7 @@ public class ProductService {
             );
         }
 
-        if (productRepository.existsByName(name)) {
+        if (productRepository.existsByName(StringUtils.capitalize(name))) {
             throw new FailedToAddNewProductException(
                     HttpStatus.BAD_REQUEST,
                     String.format("'%s' product name is taken", name)
