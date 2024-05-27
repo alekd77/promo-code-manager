@@ -145,6 +145,13 @@ public class PromoCodeService {
         }
     }
 
+    @Transactional
+    public void decrementPromoCodeUsagesLeft(String promoCodeText) {
+        PromoCode promoCode = getPromoCodeByText(promoCodeText);
+        promoCode.setUsagesLeft(promoCode.getUsagesLeft() - 1);
+        promoCodeRepository.save(promoCode);
+    }
+
     private void validateCorePromoCodeData(String text, LocalDate expirationDate, Integer usagesAllowed) {
         if (text == null || text.isEmpty()) {
             throw new FailedToAddNewPromoCodeException(
