@@ -57,4 +57,22 @@ public class ProductController {
 
         return new ResponseEntity<>("Product has been successfully updated.", HttpStatus.OK);
     }
+
+    @GetMapping(path = "/discount-price", params = {"productName", "promoCodeText"})
+    public ResponseEntity<DiscountProductPriceResponseDto> getDiscountProductPrice(
+            @RequestParam String productName,
+            @RequestParam String promoCodeText) {
+        Double discountProductPrice = productService
+                .calculateDiscountProductPrice(
+                        productName,
+                        promoCodeText
+                );
+        DiscountProductPriceResponseDto dto =
+                new DiscountProductPriceResponseDto(
+                        discountProductPrice,
+                        ""
+                );
+
+        return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
 }
