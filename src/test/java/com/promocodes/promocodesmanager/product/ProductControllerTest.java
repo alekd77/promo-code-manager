@@ -196,7 +196,7 @@ class ProductControllerTest {
         assertThat(response.getStatus())
                 .isEqualTo(HttpStatus.CREATED.value());
         assertThat(response.getContentAsString())
-                .isEqualTo("Product has been successfully added");
+                .isEqualTo("Product has been successfully added.");
 
         verify(productService, times(1))
                 .addNewProduct(
