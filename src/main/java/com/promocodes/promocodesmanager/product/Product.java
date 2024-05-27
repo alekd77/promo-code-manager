@@ -18,7 +18,7 @@ public class Product {
             generator = "products_sequence"
     )
     @Column(name="product_id")
-    Long productId;
+    private Long productId;
 
     private String name;
 
