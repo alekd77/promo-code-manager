@@ -54,7 +54,7 @@ class PromoCodeRepositoryTest {
                 PromoCodeType.PERCENTAGE,
                 null,
                 null,
-                0.15
+                85
         );
 
         PromoCode savedPromoCode = promoCodeRepository.save(percentagePromoCode);
@@ -88,7 +88,7 @@ class PromoCodeRepositoryTest {
                 PromoCodeType.PERCENTAGE,
                 null,
                 null,
-                0.15
+                85
         );
 
         promoCodeRepository.save(fixedPromoCode);

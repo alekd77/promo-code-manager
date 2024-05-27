@@ -42,7 +42,7 @@ public class PromoCode {
     private String discountCurrency;
 
     @Column(name = "discount_percentage")
-    private Double discountPercentage;
+    private Integer discountPercentage;
 
     public PromoCode() {
     }
@@ -55,7 +55,7 @@ public class PromoCode {
                      PromoCodeType type,
                      Double discountAmount,
                      String discountCurrency,
-                     Double discountPercentage) {
+                     Integer discountPercentage) {
         this.promoCodeId = promoCodeId;
         this.text = text;
         this.expirationDate = expirationDate;
@@ -131,11 +131,11 @@ public class PromoCode {
         this.discountCurrency = discountCurrency;
     }
 
-    public Double getDiscountPercentage() {
+    public Integer getDiscountPercentage() {
         return discountPercentage;
     }
 
-    public void setDiscountPercentage(Double discountPercentage) {
+    public void setDiscountPercentage(Integer discountPercentage) {
         this.discountPercentage = discountPercentage;
     }
 

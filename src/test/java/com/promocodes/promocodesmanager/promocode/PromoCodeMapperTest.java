@@ -27,7 +27,7 @@ class PromoCodeMapperTest {
                 LocalDate.of(2024, 8, 1),
                 5,
                 3,
-                null,
+                PromoCodeType.FIXED_AMOUNT,
                 55.55,
                 "USD",
                 null
@@ -88,7 +88,7 @@ class PromoCodeMapperTest {
                 PromoCodeType.PERCENTAGE,
                 null,
                 null,
-                0.9
+                85
         );
 
         PercentagePromoCodeResponseDto dto =
@@ -106,7 +106,7 @@ class PromoCodeMapperTest {
                 .isEqualTo(percentagePromoCode.getUsagesLeft());
         assertThat(PromoCodeType.PERCENTAGE)
                 .isEqualTo(percentagePromoCode.getType());
-        assertThat(0.9)
+        assertThat(85)
                 .isEqualTo(percentagePromoCode.getDiscountPercentage());
     }
 
@@ -133,7 +133,7 @@ class PromoCodeMapperTest {
                 PromoCodeType.PERCENTAGE,
                 null,
                 null,
-                0.9
+                85
         );
 
         List<PromoCode> promoCodes = new ArrayList<>();
@@ -177,7 +177,7 @@ class PromoCodeMapperTest {
                 .isEqualTo(percentagePromoCodeDto.getUsagesLeft());
         assertThat(PromoCodeType.PERCENTAGE)
                 .isEqualTo(percentagePromoCodeDto.getType());
-        assertThat(0.9)
+        assertThat(85)
                 .isEqualTo(percentagePromoCodeDto.getDiscountPercentage());
     }
 }

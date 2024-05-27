@@ -104,7 +104,7 @@ public class PromoCodeMapper {
         dto.setDiscountPercentage(
                 promoCode != null && promoCode.getDiscountPercentage() != null
                         ? promoCode.getDiscountPercentage()
-                        : 0.0
+                        : 0
         );
 
         return dto;

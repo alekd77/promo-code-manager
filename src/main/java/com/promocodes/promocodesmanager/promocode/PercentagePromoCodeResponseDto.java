@@ -3,7 +3,7 @@ package com.promocodes.promocodesmanager.promocode;
 import java.time.LocalDate;
 
 public class PercentagePromoCodeResponseDto extends PromoCodeResponseDto {
-    private Double discountPercentage;
+    private Integer discountPercentage;
 
     public PercentagePromoCodeResponseDto() {
         super();
@@ -15,16 +15,16 @@ public class PercentagePromoCodeResponseDto extends PromoCodeResponseDto {
                                           Integer usagesTotal,
                                           Integer usagesLeft,
                                           PromoCodeType type,
-                                          Double discountPercentage) {
+                                          Integer discountPercentage) {
         super(promoCodeId, text, expirationDate, usagesTotal, usagesLeft, type);
         this.discountPercentage = discountPercentage;
     }
 
-    public Double getDiscountPercentage() {
+    public Integer getDiscountPercentage() {
         return discountPercentage;
     }
 
-    public void setDiscountPercentage(Double discountPercentage) {
+    public void setDiscountPercentage(Integer discountPercentage) {
         this.discountPercentage = discountPercentage;
     }
 }
