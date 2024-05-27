@@ -3,6 +3,7 @@ package com.promocodes.promocodesmanager.promocode;
 import com.promocodes.promocodesmanager.exception.ApiExceptionDto;
 import com.promocodes.promocodesmanager.exception.ExceptionMapper;
 import com.promocodes.promocodesmanager.exception.FailedToAddNewPromoCodeException;
+import com.promocodes.promocodesmanager.exception.PromoCodeNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,14 @@ public class PromoCodeExceptionHandler {
                 ex.getMessage()
         );
         HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+
+        return new ResponseEntity<>(exceptionDto, httpStatus);
+    }
+
+    @ExceptionHandler({PromoCodeNotFoundException.class})
+    public ResponseEntity<ApiExceptionDto> handlePromoCodeNotFoundException(PromoCodeNotFoundException ex) {
+        ApiExceptionDto exceptionDto = exceptionMapper.toApiExceptionDto(ex);
+        HttpStatus httpStatus = ex.getStatus();
 
         return new ResponseEntity<>(exceptionDto, httpStatus);
     }
