@@ -1,9 +1,6 @@
 package com.promocodes.promocodesmanager.product;
 
-import com.promocodes.promocodesmanager.exception.ApiExceptionDto;
-import com.promocodes.promocodesmanager.exception.ExceptionMapper;
-import com.promocodes.promocodesmanager.exception.FailedToAddNewProductException;
-import com.promocodes.promocodesmanager.exception.FailedToUpdateProductException;
+import com.promocodes.promocodesmanager.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,8 +32,44 @@ public class ProductExceptionHandler {
         return new ResponseEntity<>(exceptionDto, httpStatus);
     }
 
+    @ExceptionHandler({ProductNotFoundException.class})
+    public ResponseEntity<ApiExceptionDto> handleProductNotFoundException(
+            ProductNotFoundException ex) {
+        ApiExceptionDto exceptionDto = exceptionMapper.toApiExceptionDto(ex);
+        HttpStatus httpStatus = ex.getStatus();
+
+        return new ResponseEntity<>(exceptionDto, httpStatus);
+    }
+
+    @ExceptionHandler({PromoCodeNotFoundException.class})
+    public ResponseEntity<ApiExceptionDto> handlePromoCodeNotFoundException(
+            PromoCodeNotFoundException ex) {
+        ApiExceptionDto exceptionDto = exceptionMapper.toApiExceptionDto(ex);
+        HttpStatus httpStatus = ex.getStatus();
+
+        return new ResponseEntity<>(exceptionDto, httpStatus);
+    }
+
+    @ExceptionHandler({ProductDiscountCalculationException.class})
+    public ResponseEntity<DiscountProductPriceResponseDto> handleProductDiscountCalculationException(
+            ProductDiscountCalculationException ex) {
+        DiscountProductPriceResponseDto dto =
+                new DiscountProductPriceResponseDto();
+        dto.setDiscountedPrice(ex.getProduct().getPrice());
+        dto.setWarningMessage(
+                String.format(
+                        "%s\n%s",
+                        ex.getMessage(),
+                        ex.getDebugMessage()
+                )
+        );
+
+        return new ResponseEntity<>(dto, HttpStatus.OK);
+    }
+
     @ExceptionHandler({FailedToAddNewProductException.class})
-    public ResponseEntity<ApiExceptionDto> handleFailedToAddNewProductException(FailedToAddNewProductException ex) {
+    public ResponseEntity<ApiExceptionDto> handleFailedToAddNewProductException(
+            FailedToAddNewProductException ex) {
         ApiExceptionDto exceptionDto = exceptionMapper.toApiExceptionDto(ex);
         HttpStatus httpStatus = ex.getStatus();
 
@@ -44,7 +77,8 @@ public class ProductExceptionHandler {
     }
 
     @ExceptionHandler({FailedToUpdateProductException.class})
-    public ResponseEntity<ApiExceptionDto> handleFailedToUpdateProductException(FailedToUpdateProductException ex) {
+    public ResponseEntity<ApiExceptionDto> handleFailedToUpdateProductException(
+            FailedToUpdateProductException ex) {
         ApiExceptionDto exceptionDto = exceptionMapper.toApiExceptionDto(ex);
         HttpStatus httpStatus = ex.getStatus();
 
