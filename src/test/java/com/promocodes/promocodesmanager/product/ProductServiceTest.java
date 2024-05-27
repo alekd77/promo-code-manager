@@ -2,6 +2,7 @@ package com.promocodes.promocodesmanager.product;
 
 import com.promocodes.promocodesmanager.exception.FailedToAddNewProductException;
 import com.promocodes.promocodesmanager.exception.FailedToUpdateProductException;
+import com.promocodes.promocodesmanager.promocode.PromoCodeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,11 +20,16 @@ import static org.mockito.Mockito.*;
 class ProductServiceTest {
     @Mock
     private ProductRepository productRepository;
+    @Mock
+    private PromoCodeService promoCodeService;
     private ProductService productService;
 
     @BeforeEach
     void setUp() {
-        productService = new ProductService(productRepository);
+        productService = new ProductService(
+                productRepository,
+                promoCodeService
+        );
     }
 
     @Test

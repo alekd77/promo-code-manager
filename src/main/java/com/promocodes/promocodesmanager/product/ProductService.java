@@ -2,6 +2,9 @@ package com.promocodes.promocodesmanager.product;
 
 import com.promocodes.promocodesmanager.exception.FailedToAddNewProductException;
 import com.promocodes.promocodesmanager.exception.FailedToUpdateProductException;
+import com.promocodes.promocodesmanager.exception.ProductNotFoundException;
+import com.promocodes.promocodesmanager.promocode.PromoCode;
+import com.promocodes.promocodesmanager.promocode.PromoCodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -18,10 +21,13 @@ import java.util.Optional;
 @Service
 public class ProductService {
     private final ProductRepository productRepository;
+    private final PromoCodeService promoCodeService;
 
     @Autowired
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository,
+                          PromoCodeService promoCodeService) {
         this.productRepository = productRepository;
+        this.promoCodeService = promoCodeService;
     }
 
     public List<Product> getAllProducts() {
@@ -185,13 +191,19 @@ public class ProductService {
 
     private Product findProductByName(String name) {
         if (name == null || name.isEmpty()) {
-            return null;
+            throw new ProductNotFoundException(
+                    "Product name is null or empty."
+            );
         }
 
         String formattedName = StringUtils.capitalize(name);
         Optional<Product> optionalProduct =
                 productRepository.findByName(formattedName);
 
-        return optionalProduct.orElse(null);
+        if (optionalProduct.isEmpty()) {
+            throw new ProductNotFoundException();
+        }
+
+        return optionalProduct.get();
     }
 }
