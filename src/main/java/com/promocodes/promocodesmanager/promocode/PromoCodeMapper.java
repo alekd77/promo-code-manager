@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PromoCodeMapper {
@@ -109,21 +110,27 @@ public class PromoCodeMapper {
         return dto;
     }
 
+    public Optional<PromoCodeResponseDto> toPromoCodeResponseDto(PromoCode promoCode) {
+        if (promoCode == null || promoCode.getType() == null) {
+            return Optional.empty();
+        }
+
+        if (promoCode.getType() == PromoCodeType.FIXED_AMOUNT) {
+            return Optional.of(toFixedAmountPromoCodeResponseDto(promoCode));
+        }
+
+        if (promoCode.getType() == PromoCodeType.PERCENTAGE) {
+            return Optional.of(toPercentagePromoCodeResponseDto(promoCode));
+        }
+
+        return Optional.empty();
+    }
+
     public List<PromoCodeResponseDto> toPromoCodesResponseDtoList(List<PromoCode> promoCodes) {
         List<PromoCodeResponseDto> result = new ArrayList<>();
 
         for (PromoCode promoCode : promoCodes) {
-            if (promoCode == null || promoCode.getType() == null) {
-                continue;
-            }
-
-            if (promoCode.getType() == PromoCodeType.FIXED_AMOUNT) {
-                result.add(toFixedAmountPromoCodeResponseDto(promoCode));
-            }
-
-            if (promoCode.getType() == PromoCodeType.PERCENTAGE) {
-                result.add(toPercentagePromoCodeResponseDto(promoCode));
-            }
+            toPromoCodeResponseDto(promoCode).ifPresent(result::add);
         }
 
         return result;
