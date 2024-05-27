@@ -1,6 +1,7 @@
 package com.promocodes.promocodesmanager.promocode;
 
 import com.promocodes.promocodesmanager.exception.ExceptionMapper;
+import com.promocodes.promocodesmanager.exception.PromoCodeNotFoundException;
 import com.promocodes.promocodesmanager.product.Product;
 import com.promocodes.promocodesmanager.product.ProductResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,14 @@ public class PromoCodeController {
         List<PromoCodeResponseDto> promoCodeResponseDtoList = promoCodeMapper.toPromoCodesResponseDtoList(promoCodes);
 
         return new ResponseEntity<>(promoCodeResponseDtoList, HttpStatus.OK);
+    }
+
+    @GetMapping(params = "text")
+    public ResponseEntity<PromoCodeResponseDto> getPromoCodeByText(@RequestParam String text) {
+        PromoCode promoCode = promoCodeService.getPromoCodeByText(text);
+        PromoCodeResponseDto promoCodeResponseDto = promoCodeMapper.toPromoCodeResponseDto(promoCode).orElseThrow();
+
+        return new ResponseEntity<>(promoCodeResponseDto, HttpStatus.OK);
     }
 
     @PostMapping(path = "/fixed-amount")
