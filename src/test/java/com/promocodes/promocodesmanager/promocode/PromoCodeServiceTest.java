@@ -141,7 +141,7 @@ class PromoCodeServiceTest {
                 ).containsExactly(
                         "Failed to add new promo code.",
                         HttpStatus.BAD_REQUEST,
-                        "Promo code text can not be null or empty"
+                        "Promo code text can not be null or empty."
                 );
 
         verify(promoCodeRepository, times(0))
@@ -170,7 +170,7 @@ class PromoCodeServiceTest {
                 ).containsExactly(
                         "Failed to add new promo code.",
                         HttpStatus.BAD_REQUEST,
-                        "Promo code text can not be null or empty"
+                        "Promo code text can not be null or empty."
                 );
 
         verify(promoCodeRepository, times(0))
@@ -200,7 +200,7 @@ class PromoCodeServiceTest {
                         "Failed to add new promo code.",
                         HttpStatus.BAD_REQUEST,
                         "Promo code text must be " +
-                                "between 3 and 24 characters long"
+                                "between 3 and 24 characters long."
                 );
 
         verify(promoCodeRepository, times(0))
@@ -230,7 +230,7 @@ class PromoCodeServiceTest {
                         "Failed to add new promo code.",
                         HttpStatus.BAD_REQUEST,
                         "Promo code text must be " +
-                                "between 3 and 24 characters long"
+                                "between 3 and 24 characters long."
                 );
 
         verify(promoCodeRepository, times(0))
@@ -562,7 +562,7 @@ class PromoCodeServiceTest {
                         "Failed to add new promo code.",
                         HttpStatus.BAD_REQUEST,
                         String.format("Promo code text must be unique. "
-                                + "'%s' promo code already exists", text)
+                                + "'%s' promo code already exists.", text)
                 );
 
         verify(promoCodeRepository, times(0))
@@ -591,7 +591,7 @@ class PromoCodeServiceTest {
                 ).containsExactly(
                         "Failed to add new promo code.",
                         HttpStatus.BAD_REQUEST,
-                        "Promo code expiration date can not be null"
+                        "Promo code expiration date can not be null."
                 );
 
         verify(promoCodeRepository, times(0))
@@ -620,7 +620,7 @@ class PromoCodeServiceTest {
                 ).containsExactly(
                         "Failed to add new promo code.",
                         HttpStatus.BAD_REQUEST,
-                        "Promo code expiration date can not be in the past"
+                        "Promo code expiration date can not be in the past."
                 );
 
         verify(promoCodeRepository, times(0))
@@ -661,5 +661,97 @@ class PromoCodeServiceTest {
         assertThat(discountCurrency).isEqualTo(val.getDiscountCurrency());
         assertThat(val.getType()).isEqualTo(PromoCodeType.FIXED_AMOUNT);
         assertThat(val.getDiscountPercentage()).isNull();
+    }
+
+    @Test
+    public void shouldAddNewPercentagePromoCode() {
+        String text = "TEST123";
+        LocalDate expirationDate = LocalDate.of(2024, 8, 18);
+        Integer usagesAllowed = 10;
+        Integer discountPercentage = 10;
+
+        when(promoCodeRepository.existsByText(text)).thenReturn(false);
+
+        promoCodeService.addNewPercentagePromoCode(
+                text,
+                expirationDate,
+                usagesAllowed,
+                discountPercentage
+        );
+
+        ArgumentCaptor<PromoCode> captor =
+                ArgumentCaptor.forClass(PromoCode.class);
+
+        verify(promoCodeRepository, times(1))
+                .save(captor.capture());
+
+        PromoCode val = captor.getValue();
+
+        assertThat(text).isEqualTo(val.getText());
+        assertThat(expirationDate).isEqualTo(val.getExpirationDate());
+        assertThat(usagesAllowed).isEqualTo(val.getUsagesTotal());
+        assertThat(usagesAllowed).isEqualTo(val.getUsagesLeft());
+        assertThat(0.0).isEqualTo(val.getDiscountAmount());
+        assertThat(val.getDiscountCurrency()).isNull();
+        assertThat(PromoCodeType.PERCENTAGE).isEqualTo(val.getType());
+        assertThat(10).isEqualTo(val.getDiscountPercentage());
+    }
+
+    @Test
+    public void shouldThrowFailedToAddNewPromoCodeExceptionIfDiscountPercentageIsZero() {
+        String text = "TEST123";
+        LocalDate expirationDate = LocalDate.of(2024, 8, 18);
+        Integer usagesAllowed = 10;
+        Integer discountPercentage = 0;
+
+        when(promoCodeRepository.existsByText(text)).thenReturn(false);
+
+        assertThatThrownBy(() -> promoCodeService.addNewPercentagePromoCode(
+                text,
+                expirationDate,
+                usagesAllowed,
+                discountPercentage
+        )).isInstanceOf(FailedToAddNewPromoCodeException.class)
+                .extracting(
+                        "message",
+                        "status",
+                        "debugMessage"
+                ).containsExactly(
+                        "Failed to add new promo code.",
+                        HttpStatus.BAD_REQUEST,
+                        "Promo code discount percentage can not be less than or equal zero."
+                );
+
+        verify(promoCodeRepository, times(0))
+                .save(any());
+    }
+
+    @Test
+    public void shouldThrowFailedToAddNewPromoCodeExceptionIfDiscountPercentageIsMoreThanHundred() {
+        String text = "TEST123";
+        LocalDate expirationDate = LocalDate.of(2024, 8, 18);
+        Integer usagesAllowed = 10;
+        Integer discountPercentage = 101;
+
+        when(promoCodeRepository.existsByText(text)).thenReturn(false);
+
+        assertThatThrownBy(() -> promoCodeService.addNewPercentagePromoCode(
+                text,
+                expirationDate,
+                usagesAllowed,
+                discountPercentage
+        )).isInstanceOf(FailedToAddNewPromoCodeException.class)
+                .extracting(
+                        "message",
+                        "status",
+                        "debugMessage"
+                ).containsExactly(
+                        "Failed to add new promo code.",
+                        HttpStatus.BAD_REQUEST,
+                        "Promo code discount percentage can not be more than 100."
+                );
+
+        verify(promoCodeRepository, times(0))
+                .save(any());
     }
 }
