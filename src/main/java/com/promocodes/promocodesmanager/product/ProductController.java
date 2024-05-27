@@ -1,8 +1,6 @@
 package com.promocodes.promocodesmanager.product;
 
-import com.promocodes.promocodesmanager.exception.ApiExceptionDto;
 import com.promocodes.promocodesmanager.exception.ExceptionMapper;
-import com.promocodes.promocodesmanager.exception.FailedToAddNewProductException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,14 +33,28 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<String> addNewProduct(@RequestBody ProductDto product) {
+    public ResponseEntity<String> addNewProduct(@RequestBody ProductDto dto) {
         productService.addNewProduct(
-                product.getName(),
-                product.getDescription(),
-                product.getPrice(),
-                product.getCurrency()
+                dto.getName(),
+                dto.getDescription(),
+                dto.getPrice(),
+                dto.getCurrency()
         );
 
-        return new ResponseEntity<>("Product has been successfully added", HttpStatus.CREATED);
+        return new ResponseEntity<>("Product has been successfully added.", HttpStatus.CREATED);
+    }
+
+    @PutMapping
+    public ResponseEntity<String> updateProductData(@RequestParam String name,
+                                                    @RequestBody ProductDto dto) {
+        productService.updateProduct(
+                name,
+                dto.getName(),
+                dto.getDescription(),
+                dto.getPrice(),
+                dto.getCurrency()
+        );
+
+        return new ResponseEntity<>("Product has been successfully updated.", HttpStatus.OK);
     }
 }
