@@ -37,6 +37,24 @@ public class ProductService {
         return productRepository.findAll();
     }
 
+    public Product findProductByName(String name) {
+        if (name == null || name.isEmpty()) {
+            throw new ProductNotFoundException(
+                    "Product name is null or empty."
+            );
+        }
+
+        String formattedName = StringUtils.capitalize(name);
+        Optional<Product> optionalProduct =
+                productRepository.findByName(formattedName);
+
+        if (optionalProduct.isEmpty()) {
+            throw new ProductNotFoundException();
+        }
+
+        return optionalProduct.get();
+    }
+
     @Transactional
     public Product addNewProduct(String name,
                                  String description,
@@ -305,23 +323,5 @@ public class ProductService {
         } catch (Exception ex) {
             return false;
         }
-    }
-
-    private Product findProductByName(String name) {
-        if (name == null || name.isEmpty()) {
-            throw new ProductNotFoundException(
-                    "Product name is null or empty."
-            );
-        }
-
-        String formattedName = StringUtils.capitalize(name);
-        Optional<Product> optionalProduct =
-                productRepository.findByName(formattedName);
-
-        if (optionalProduct.isEmpty()) {
-            throw new ProductNotFoundException();
-        }
-
-        return optionalProduct.get();
     }
 }
