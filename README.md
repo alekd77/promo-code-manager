@@ -9,7 +9,8 @@
 
 ## **Installation:**
 
-1. **Download the application:** Visit the Releases section on the project's main page and download the `.jar` file.
+1. **Download the application:**
+    * Visit the Releases section on the project's main page and download the `.jar` file.
 2. **Run the application:**
     * Navigate to the directory where you downloaded the `.jar` file.
     * Open your terminal and run the following command:
