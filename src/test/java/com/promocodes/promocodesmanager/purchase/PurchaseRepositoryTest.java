@@ -31,19 +31,9 @@ class PurchaseRepositoryTest {
 
     @Test
     public void shouldSavePurchase() {
-        Product product = new Product(
-                123L,
-                "NikeShoes",
-                "Clothes",
-                155.55,
-                "USD"
-        );
-
-        Product savedProduct = productRepository.save(product);
-
         Purchase purchase = new Purchase(
                 null,
-                savedProduct,
+                "NikeShoes",
                 LocalDate.now().minusDays(5),
                 155.55,
                 100.0,
@@ -53,8 +43,6 @@ class PurchaseRepositoryTest {
         Purchase savedPurchase = purchaseRepository.save(purchase);
 
         assertThat(savedPurchase.getPurchaseId())
-                .isNotNull();
-        assertThat(savedPurchase.getProduct())
                 .isNotNull();
         assertThat(savedPurchase)
                 .usingRecursiveComparison()

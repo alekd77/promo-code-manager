@@ -47,13 +47,7 @@ class PurchaseServiceTest {
         purchases.add(
                 new Purchase(
                         46L,
-                        new Product(
-                                123L,
-                                "NikeShoes",
-                                "Clothes",
-                                150.0,
-                                "USD"
-                        ),
+                        "NikeShoes",
                         LocalDate.now().minusDays(30),
                         150.0,
                         100.0,
@@ -64,13 +58,7 @@ class PurchaseServiceTest {
         purchases.add(
                 new Purchase(
                         48L,
-                        new Product(
-                                123L,
-                                "NikeShoes",
-                                "Clothes",
-                                150.0,
-                                "USD"
-                        ),
+                        "NikeShoes",
                         LocalDate.now().minusDays(10),
                         150.0,
                         80.0,
@@ -81,13 +69,7 @@ class PurchaseServiceTest {
         purchases.add(
                 new Purchase(
                         49L,
-                        new Product(
-                                123L,
-                                "NikeShoes",
-                                "Clothes",
-                                150.0,
-                                "USD"
-                        ),
+                        "NikeShoes",
                         LocalDate.now().minusDays(8),
                         150.0,
                         75.0,
@@ -113,13 +95,7 @@ class PurchaseServiceTest {
         purchases.add(
                 new Purchase(
                         46L,
-                        new Product(
-                                123L,
-                                "NikeShoes",
-                                "Clothes",
-                                150.0,
-                                "USD"
-                        ),
+                        "NikeShoes",
                         LocalDate.now().minusDays(30),
                         150.0,
                         100.0,
@@ -130,13 +106,7 @@ class PurchaseServiceTest {
         purchases.add(
                 new Purchase(
                         48L,
-                        new Product(
-                                123L,
-                                "NikeShoes",
-                                "Clothes",
-                                150.0,
-                                "USD"
-                        ),
+                        "NikeShoes",
                         LocalDate.now().minusDays(10),
                         150.0,
                         80.0,
@@ -147,13 +117,7 @@ class PurchaseServiceTest {
         purchases.add(
                 new Purchase(
                         49L,
-                        new Product(
-                                123L,
-                                "NikeShoes",
-                                "Clothes",
-                                150.0,
-                                "USD"
-                        ),
+                        "NikeShoes",
                         LocalDate.now().minusDays(8),
                         150.0,
                         75.0,
@@ -164,13 +128,7 @@ class PurchaseServiceTest {
         purchases.add(
                 new Purchase(
                         50L,
-                        new Product(
-                                123L,
-                                "NikeShoes",
-                                "Clothes",
-                                150.0,
-                                "USD"
-                        ),
+                        "NikeShoes",
                         LocalDate.now().minusDays(6),
                         150.0,
                         32.0,
@@ -181,13 +139,7 @@ class PurchaseServiceTest {
         purchases.add(
                 new Purchase(
                         60L,
-                        new Product(
-                                123L,
-                                "NikeShoes",
-                                "Clothes",
-                                150.0,
-                                "USD"
-                        ),
+                        "NikeShoes",
                         LocalDate.now().minusDays(6),
                         150.0,
                         32.0,
@@ -226,13 +178,7 @@ class PurchaseServiceTest {
         purchases.add(
                 new Purchase(
                         46L,
-                        new Product(
-                                123L,
-                                "NikeShoes",
-                                "Clothes",
-                                150.0,
-                                "USD"
-                        ),
+                        "NikeShoes",
                         LocalDate.now().minusDays(30),
                         150.0,
                         100.0,
@@ -243,13 +189,7 @@ class PurchaseServiceTest {
         purchases.add(
                 new Purchase(
                         48L,
-                        new Product(
-                                143L,
-                                "AdidasShoes",
-                                "Clothes",
-                                200.0,
-                                "EUR"
-                        ),
+                        "AdidasShoes",
                         LocalDate.now().minusDays(10),
                         200.0,
                         80.0,
@@ -260,13 +200,7 @@ class PurchaseServiceTest {
         purchases.add(
                 new Purchase(
                         49L,
-                        new Product(
-                                153L,
-                                "PumaShoes",
-                                "Clothes",
-                                343.0,
-                                "PLN"
-                        ),
+                        "PumaShoes",
                         LocalDate.now().minusDays(8),
                         343.0,
                         75.0,
@@ -307,13 +241,7 @@ class PurchaseServiceTest {
         purchases.add(
                 new Purchase(
                         46L,
-                        new Product(
-                                123L,
-                                "NikeShoes",
-                                "Clothes",
-                                150.0,
-                                "USD"
-                        ),
+                        "NikeShoes",
                         LocalDate.now().minusDays(30),
                         150.0,
                         100.0,
@@ -324,13 +252,7 @@ class PurchaseServiceTest {
         purchases.add(
                 new Purchase(
                         48L,
-                        new Product(
-                                143L,
-                                "AdidasShoes",
-                                "Clothes",
-                                200.0,
-                                "USD"
-                        ),
+                        "AdidasShoes",
                         LocalDate.now().minusDays(10),
                         200.0,
                         80.0,
@@ -341,13 +263,7 @@ class PurchaseServiceTest {
         purchases.add(
                 new Purchase(
                         49L,
-                        new Product(
-                                153L,
-                                "PumaShoes",
-                                "Clothes",
-                                343.0,
-                                "PLN"
-                        ),
+                        "PumaShoes",
                         LocalDate.now().minusDays(8),
                         343.0,
                         75.0,
@@ -415,8 +331,8 @@ class PurchaseServiceTest {
 
         assertThat(captor.getValue())
                 .isNotNull();
-        assertThat(captor.getValue().getProduct())
-                .isNotNull();
+        assertThat(product.getName())
+                .isEqualTo(captor.getValue().getProductName());
         assertThat(captor.getValue().getPurchaseDate())
                 .isNotNull();
         assertThat(product.getPrice())
