@@ -13,6 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PurchaseService {
@@ -27,6 +30,19 @@ public class PurchaseService {
         this.purchaseRepository = purchaseRepository;
         this.productService = productService;
         this.promoCodeService = promoCodeService;
+    }
+
+    public List<List<Purchase>> findPurchasesGroupedByCurrency() {
+        try {
+            return purchaseRepository.findAll()
+                    .stream()
+                    .collect(Collectors.groupingBy(Purchase::getCurrency))
+                    .values()
+                    .stream()
+                    .toList();
+        } catch (Exception ex) {
+            return Collections.emptyList();
+        }
     }
 
     @Transactional

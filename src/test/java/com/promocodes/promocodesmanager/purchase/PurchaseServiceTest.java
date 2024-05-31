@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,6 +39,349 @@ class PurchaseServiceTest {
                 productService,
                 promoCodeService
         );
+    }
+
+    @Test
+    public void shouldReturnsSinglePurchaseGroupForSameCurrencyWithThreeElements() {
+        List<Purchase> purchases = new ArrayList<>();
+        purchases.add(
+                new Purchase(
+                        46L,
+                        new Product(
+                                123L,
+                                "NikeShoes",
+                                "Clothes",
+                                150.0,
+                                "USD"
+                        ),
+                        LocalDate.now().minusDays(30),
+                        150.0,
+                        100.0,
+                        "USD"
+                )
+        );
+
+        purchases.add(
+                new Purchase(
+                        48L,
+                        new Product(
+                                123L,
+                                "NikeShoes",
+                                "Clothes",
+                                150.0,
+                                "USD"
+                        ),
+                        LocalDate.now().minusDays(10),
+                        150.0,
+                        80.0,
+                        "USD"
+                )
+        );
+
+        purchases.add(
+                new Purchase(
+                        49L,
+                        new Product(
+                                123L,
+                                "NikeShoes",
+                                "Clothes",
+                                150.0,
+                                "USD"
+                        ),
+                        LocalDate.now().minusDays(8),
+                        150.0,
+                        75.0,
+                        "USD"
+                )
+        );
+
+        when(purchaseRepository.findAll()).thenReturn(purchases);
+
+        List<List<Purchase>> purchasesGroupedByCurrency =
+                purchaseService.findPurchasesGroupedByCurrency();
+
+        verify(purchaseRepository, times(1))
+                .findAll();
+
+        assertThat(1).isEqualTo(purchasesGroupedByCurrency.size());
+        assertThat(3).isEqualTo(purchasesGroupedByCurrency.get(0).size());
+    }
+
+    @Test
+    public void shouldReturnsSinglePurchaseGroupForSameCurrencyWithFiveElements() {
+        List<Purchase> purchases = new ArrayList<>();
+        purchases.add(
+                new Purchase(
+                        46L,
+                        new Product(
+                                123L,
+                                "NikeShoes",
+                                "Clothes",
+                                150.0,
+                                "USD"
+                        ),
+                        LocalDate.now().minusDays(30),
+                        150.0,
+                        100.0,
+                        "USD"
+                )
+        );
+
+        purchases.add(
+                new Purchase(
+                        48L,
+                        new Product(
+                                123L,
+                                "NikeShoes",
+                                "Clothes",
+                                150.0,
+                                "USD"
+                        ),
+                        LocalDate.now().minusDays(10),
+                        150.0,
+                        80.0,
+                        "USD"
+                )
+        );
+
+        purchases.add(
+                new Purchase(
+                        49L,
+                        new Product(
+                                123L,
+                                "NikeShoes",
+                                "Clothes",
+                                150.0,
+                                "USD"
+                        ),
+                        LocalDate.now().minusDays(8),
+                        150.0,
+                        75.0,
+                        "USD"
+                )
+        );
+
+        purchases.add(
+                new Purchase(
+                        50L,
+                        new Product(
+                                123L,
+                                "NikeShoes",
+                                "Clothes",
+                                150.0,
+                                "USD"
+                        ),
+                        LocalDate.now().minusDays(6),
+                        150.0,
+                        32.0,
+                        "USD"
+                )
+        );
+
+        purchases.add(
+                new Purchase(
+                        60L,
+                        new Product(
+                                123L,
+                                "NikeShoes",
+                                "Clothes",
+                                150.0,
+                                "USD"
+                        ),
+                        LocalDate.now().minusDays(6),
+                        150.0,
+                        32.0,
+                        "USD"
+                )
+        );
+
+        when(purchaseRepository.findAll()).thenReturn(purchases);
+
+        List<List<Purchase>> purchasesGroupedByCurrency =
+                purchaseService.findPurchasesGroupedByCurrency();
+
+        verify(purchaseRepository, times(1))
+                .findAll();
+
+        assertThat(1).isEqualTo(purchasesGroupedByCurrency.size());
+        assertThat(5).isEqualTo(purchasesGroupedByCurrency.get(0).size());
+    }
+
+    @Test
+    public void shouldReturnsEmptyPurchaseGroupForSameCurrency() {
+        when(purchaseRepository.findAll()).thenReturn(Collections.emptyList());
+
+        List<List<Purchase>> purchasesGroupedByCurrency =
+                purchaseService.findPurchasesGroupedByCurrency();
+
+        verify(purchaseRepository, times(1))
+                .findAll();
+
+        assertThat(0).isEqualTo(purchasesGroupedByCurrency.size());
+    }
+
+    @Test
+    public void shouldReturnsThreePurchaseGroupForSameCurrencyWithOneElementEach() {
+        List<Purchase> purchases = new ArrayList<>();
+        purchases.add(
+                new Purchase(
+                        46L,
+                        new Product(
+                                123L,
+                                "NikeShoes",
+                                "Clothes",
+                                150.0,
+                                "USD"
+                        ),
+                        LocalDate.now().minusDays(30),
+                        150.0,
+                        100.0,
+                        "USD"
+                )
+        );
+
+        purchases.add(
+                new Purchase(
+                        48L,
+                        new Product(
+                                143L,
+                                "AdidasShoes",
+                                "Clothes",
+                                200.0,
+                                "EUR"
+                        ),
+                        LocalDate.now().minusDays(10),
+                        200.0,
+                        80.0,
+                        "EUR"
+                )
+        );
+
+        purchases.add(
+                new Purchase(
+                        49L,
+                        new Product(
+                                153L,
+                                "PumaShoes",
+                                "Clothes",
+                                343.0,
+                                "PLN"
+                        ),
+                        LocalDate.now().minusDays(8),
+                        343.0,
+                        75.0,
+                        "PLN"
+                )
+        );
+
+        when(purchaseRepository.findAll()).thenReturn(purchases);
+
+        List<List<Purchase>> purchasesGroupedByCurrency =
+                purchaseService.findPurchasesGroupedByCurrency();
+
+        verify(purchaseRepository, times(1))
+                .findAll();
+
+        assertThat(3).isEqualTo(purchasesGroupedByCurrency.size());
+        assertThat(1).isEqualTo(purchasesGroupedByCurrency.get(0).size());
+        assertThat(1).isEqualTo(purchasesGroupedByCurrency.get(1).size());
+        assertThat(1).isEqualTo(purchasesGroupedByCurrency.get(2).size());
+
+        Set<String> currencies = new HashSet<>();
+        currencies.add("USD");
+        currencies.add("EUR");
+        currencies.add("PLN");
+
+        for (List<Purchase> purchaseList : purchasesGroupedByCurrency) {
+            String purchaseCurrency = purchaseList.get(0).getCurrency();
+            assertThat(currencies).contains(purchaseCurrency);
+            currencies.remove(purchaseCurrency);
+        }
+
+        assertThat(0).isEqualTo(currencies.size());
+    }
+
+    @Test
+    public void shouldReturnsTwoPurchaseGroupForSameCurrency() {
+        List<Purchase> purchases = new ArrayList<>();
+        purchases.add(
+                new Purchase(
+                        46L,
+                        new Product(
+                                123L,
+                                "NikeShoes",
+                                "Clothes",
+                                150.0,
+                                "USD"
+                        ),
+                        LocalDate.now().minusDays(30),
+                        150.0,
+                        100.0,
+                        "USD"
+                )
+        );
+
+        purchases.add(
+                new Purchase(
+                        48L,
+                        new Product(
+                                143L,
+                                "AdidasShoes",
+                                "Clothes",
+                                200.0,
+                                "USD"
+                        ),
+                        LocalDate.now().minusDays(10),
+                        200.0,
+                        80.0,
+                        "USD"
+                )
+        );
+
+        purchases.add(
+                new Purchase(
+                        49L,
+                        new Product(
+                                153L,
+                                "PumaShoes",
+                                "Clothes",
+                                343.0,
+                                "PLN"
+                        ),
+                        LocalDate.now().minusDays(8),
+                        343.0,
+                        75.0,
+                        "PLN"
+                )
+        );
+
+        when(purchaseRepository.findAll()).thenReturn(purchases);
+
+        List<List<Purchase>> purchasesGroupedByCurrency =
+                purchaseService.findPurchasesGroupedByCurrency();
+
+        verify(purchaseRepository, times(1))
+                .findAll();
+
+        assertThat(2).isEqualTo(purchasesGroupedByCurrency.size());
+        Set<Integer> groupSizes = new HashSet<>();
+        groupSizes.add(2);
+        groupSizes.add(1);
+
+        Set<String> currencies = new HashSet<>();
+        currencies.add("USD");
+        currencies.add("PLN");
+
+        for (List<Purchase> purchaseList : purchasesGroupedByCurrency) {
+            assertThat(groupSizes).contains(purchaseList.size());
+            groupSizes.remove(purchaseList.size());
+
+            assertThat(currencies).contains(purchaseList.get(0).getCurrency());
+            currencies.remove(purchaseList.get(0).getCurrency());
+        }
+
+        assertThat(0).isEqualTo(groupSizes.size());
+        assertThat(0).isEqualTo(currencies.size());
     }
 
     @Test
