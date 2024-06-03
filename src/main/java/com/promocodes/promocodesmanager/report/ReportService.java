@@ -2,9 +2,11 @@ package com.promocodes.promocodesmanager.report;
 
 import com.promocodes.promocodesmanager.exception.FailedToGenerateReportException;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 
+@Service
 public class ReportService {
     public void validateReportDates(LocalDate startDate, LocalDate endDate) {
         if (startDate == null || endDate == null) {

@@ -3,13 +3,17 @@ package com.promocodes.promocodesmanager.report.sales;
 import com.promocodes.promocodesmanager.purchase.Purchase;
 import com.promocodes.promocodesmanager.purchase.PurchaseService;
 import com.promocodes.promocodesmanager.report.ReportService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
 
+@Service
 public class SalesReportService extends ReportService {
     private final PurchaseService purchaseService;
 
+    @Autowired
     public SalesReportService(PurchaseService purchaseService) {
         this.purchaseService = purchaseService;
     }
