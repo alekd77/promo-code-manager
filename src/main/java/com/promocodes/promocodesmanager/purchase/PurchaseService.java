@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -58,6 +60,10 @@ public class PurchaseService {
                                 productName,
                                 promoCodeText
                         );
+
+                discountAmount = BigDecimal.valueOf(discountAmount)
+                        .setScale(2, RoundingMode.DOWN)
+                        .doubleValue();
 
                 promoCodeService.decrementPromoCodeUsagesLeft(
                         promoCodeText
