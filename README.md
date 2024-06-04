@@ -130,3 +130,12 @@ java -jar <file_name>.jar
     ```bash
     curl --location --request POST 'http://localhost:8080/api/v1/purchases?productName=NikeShoes&promoCodeText=SUMMER2024'
     ```
+<br>
+
+* **[Implemented in v0.2.0 release] Generate sales report by currency (GET):** `/reports/sales/by-currency`
+    * Generates a sales report for registered purchases.
+    * Query parameters `startDate` and `endDate` in `YYYY-MM-DD` format are optional.<br><br>
+
+    ```bash
+    curl --location 'http://localhost:8080/api/v1/reports/sales/by-currency?startDate=2024-02-04&endDate=2024-06-04'
+    ```
