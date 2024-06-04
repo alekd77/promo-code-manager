@@ -337,7 +337,7 @@ class PurchaseServiceTest {
                 .isNotNull();
         assertThat(product.getPrice())
                 .isEqualTo(captor.getValue().getRegularPrice());
-        assertThat(100.0)
+        assertThat(50.0)
                 .isEqualTo(captor.getValue().getDiscountAmount());
         assertThat(product.getCurrency())
                 .isEqualTo(captor.getValue().getCurrency());

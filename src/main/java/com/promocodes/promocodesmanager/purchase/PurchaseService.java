@@ -49,11 +49,11 @@ public class PurchaseService {
     public Purchase handlePurchase(String productName,
                                    String promoCodeText) {
         Product product = productService.findProductByName(productName);
-        Double discountAmount = 0.0;
+        double discountAmount = 0.0;
 
         try {
             if (promoCodeText != null && !promoCodeText.isEmpty()) {
-                discountAmount = productService
+                discountAmount = product.getPrice() - productService
                         .calculateDiscountProductPrice(
                                 productName,
                                 promoCodeText
