@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Optional;
-
 @RestController
 @RequestMapping(path="/purchases")
 public class PurchaseController {
@@ -20,14 +18,20 @@ public class PurchaseController {
         this.purchaseService = purchaseService;
     }
 
-    @PostMapping(params = {"productName", "promoCodeText"})
+    @PostMapping()
     public ResponseEntity<String> handlePurchase(
-            @RequestParam String productName,
-            @RequestParam Optional<String> promoCodeText) {
+            @RequestParam(name = "productName")
+            String productName,
+            @RequestParam(name = "promoCodeText", required = false)
+            String promoCodeText) {
+
+        promoCodeText = promoCodeText != null
+                ? promoCodeText
+                : "";
 
         purchaseService.handlePurchase(
                 productName,
-                promoCodeText.orElse("")
+                promoCodeText
         );
 
         String message = String.format(
