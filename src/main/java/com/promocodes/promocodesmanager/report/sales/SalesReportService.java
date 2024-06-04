@@ -6,6 +6,8 @@ import com.promocodes.promocodesmanager.report.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -50,6 +52,19 @@ public class SalesReportService extends ReportService {
                 continue;
             }
 
+            totalRevenue = BigDecimal.valueOf(totalRevenue)
+                    .setScale(2, RoundingMode.DOWN)
+                    .doubleValue();
+
+            totalDiscount = BigDecimal.valueOf(totalDiscount)
+                    .setScale(2, RoundingMode.DOWN)
+                    .doubleValue();
+
+            double totalNetRevenue = BigDecimal.valueOf(totalRevenue - totalDiscount)
+                    .setScale(2, RoundingMode.DOWN)
+                    .doubleValue();
+
+
             SalesReportByCurrencyEntryDto dto =
                     new SalesReportByCurrencyEntryDto();
 
@@ -57,7 +72,7 @@ public class SalesReportService extends ReportService {
             dto.setNumberOfPurchases(numberOfPurchases);
             dto.setTotalRevenue(totalRevenue);
             dto.setTotalDiscount(totalDiscount);
-            dto.setTotalNetRevenue(totalRevenue - totalDiscount);
+            dto.setTotalNetRevenue(totalNetRevenue);
 
             responseDto.getEntries().add(dto);
         }
