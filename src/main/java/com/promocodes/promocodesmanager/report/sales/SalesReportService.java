@@ -46,6 +46,10 @@ public class SalesReportService extends ReportService {
                 totalDiscount += purchase.getDiscountAmount();
             }
 
+            if (numberOfPurchases == 0) {
+                continue;
+            }
+
             SalesReportByCurrencyEntryDto dto =
                     new SalesReportByCurrencyEntryDto();
 
