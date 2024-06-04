@@ -23,14 +23,20 @@ public class ReportController {
         this.salesReportService = salesReportService;
     }
 
-    @GetMapping(path = "/sales/by-currency", params = {"startDate", "endDate"})
+    @GetMapping(path = "/sales/by-currency")
     public ResponseEntity<SalesReportByCurrencyResponseDto> generateSalesByCurrencyReport(
-            @RequestParam
+            @RequestParam(name = "startDate", required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
             LocalDate startDate,
-            @RequestParam
+            @RequestParam(name = "endDate", required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
             LocalDate endDate) {
+
+        if (startDate == null && endDate == null) {
+            startDate = LocalDate.ofEpochDay(0);
+            endDate = LocalDate.now();
+        }
+
         SalesReportByCurrencyResponseDto responseDto =
                 salesReportService.generateSalesByCurrencyReport(
                         startDate,
@@ -39,6 +45,5 @@ public class ReportController {
 
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
-
 
 }
