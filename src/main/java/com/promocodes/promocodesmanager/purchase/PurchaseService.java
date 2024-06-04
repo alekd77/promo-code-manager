@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -49,15 +51,19 @@ public class PurchaseService {
     public Purchase handlePurchase(String productName,
                                    String promoCodeText) {
         Product product = productService.findProductByName(productName);
-        Double discountAmount = 0.0;
+        double discountAmount = 0.0;
 
         try {
             if (promoCodeText != null && !promoCodeText.isEmpty()) {
-                discountAmount = productService
+                discountAmount = product.getPrice() - productService
                         .calculateDiscountProductPrice(
                                 productName,
                                 promoCodeText
                         );
+
+                discountAmount = BigDecimal.valueOf(discountAmount)
+                        .setScale(2, RoundingMode.DOWN)
+                        .doubleValue();
 
                 promoCodeService.decrementPromoCodeUsagesLeft(
                         promoCodeText
@@ -66,7 +72,7 @@ public class PurchaseService {
 
             Purchase purchase = new Purchase();
 
-            purchase.setProduct(product);
+            purchase.setProductName(productName);
             purchase.setPurchaseDate(LocalDate.now());
             purchase.setRegularPrice(product.getPrice());
             purchase.setDiscountAmount(discountAmount);

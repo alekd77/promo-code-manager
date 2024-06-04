@@ -287,9 +287,12 @@ public class ProductService {
 
         double discountPrice = product.getPrice() -
                 promoCode.getDiscountAmount();
+        double formatedDiscountPrice = BigDecimal.valueOf(discountPrice)
+                .setScale(2, RoundingMode.DOWN)
+                .doubleValue();
 
-        return discountPrice > 0
-                ? discountPrice
+        return formatedDiscountPrice > 0
+                ? formatedDiscountPrice
                 : 0;
     }
 
@@ -307,11 +310,15 @@ public class ProductService {
             );
         }
 
-        Double discountFactor = Double.valueOf(
+        double discountFactor = Double.valueOf(
                 promoCode.getDiscountPercentage()) / 100.0;
-        Double discountAmount = product.getPrice() * discountFactor;
+        double discountAmount = product.getPrice() * discountFactor;
+        double discountPrice = product.getPrice() - discountAmount;
+        double formatedDiscountPrice = BigDecimal.valueOf(discountPrice)
+                .setScale(2, RoundingMode.DOWN)
+                .doubleValue();
 
-        return product.getPrice() - discountAmount;
+        return formatedDiscountPrice;
     }
 
     private boolean isValidCurrency(String currency) {

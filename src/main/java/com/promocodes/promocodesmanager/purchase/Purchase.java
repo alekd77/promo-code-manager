@@ -22,9 +22,7 @@ public class Purchase {
     @Column(name="purchase_id")
     private Long purchaseId;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
+    private String productName;
 
     private LocalDate purchaseDate;
 
@@ -38,13 +36,13 @@ public class Purchase {
     }
 
     public Purchase(Long purchaseId,
-                    Product product,
+                    String productName,
                     LocalDate purchaseDate,
                     Double regularPrice,
                     Double discountAmount,
                     String currency) {
         this.purchaseId = purchaseId;
-        this.product = product;
+        this.productName = productName;
         this.purchaseDate = purchaseDate;
         this.regularPrice = regularPrice;
         this.discountAmount = discountAmount;
@@ -59,12 +57,12 @@ public class Purchase {
         this.purchaseId = purchaseId;
     }
 
-    public Product getProduct() {
-        return product;
+    public String getProductName() {
+        return productName;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
     public LocalDate getPurchaseDate() {
@@ -105,7 +103,7 @@ public class Purchase {
         if (o == null || getClass() != o.getClass()) return false;
         Purchase purchase = (Purchase) o;
         return Objects.equals(purchaseId, purchase.purchaseId)
-                && Objects.equals(product, purchase.product)
+                && Objects.equals(productName, purchase.productName)
                 && Objects.equals(purchaseDate, purchase.purchaseDate)
                 && Objects.equals(regularPrice, purchase.regularPrice)
                 && Objects.equals(discountAmount, purchase.discountAmount)
@@ -114,8 +112,9 @@ public class Purchase {
 
     @Override
     public int hashCode() {
-        return Objects.hash(purchaseId,
-                product,
+        return Objects.hash(
+                purchaseId,
+                productName,
                 purchaseDate,
                 regularPrice,
                 discountAmount,
@@ -127,7 +126,7 @@ public class Purchase {
     public String toString() {
         return "Purchase{" +
                 "purchaseId=" + purchaseId +
-                ", product=" + product +
+                ", productName='" + productName + '\'' +
                 ", purchaseDate=" + purchaseDate +
                 ", regularPrice=" + regularPrice +
                 ", discountAmount=" + discountAmount +
